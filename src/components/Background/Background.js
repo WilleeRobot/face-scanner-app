@@ -4,18 +4,13 @@ import Particles from "react-tsparticles";
 
 const Background = () => {
   const particlesInit = async (main) => {
-    console.log(main);
     await loadFull(main);
   };
 
-  const particlesLoaded = (container) => {
-    console.log(container);
-  };
   return (
     <Particles
       id="tsparticles"
       init={particlesInit}
-      loaded={particlesLoaded}
       options={{
         fpsLimit: 120,
         interactivity: {
