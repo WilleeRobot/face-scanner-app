@@ -7,6 +7,8 @@ import Background from "./components/Background/Background";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import "./App.css";
 import Clarifai from "clarifai";
+import SignIn from "./components/SignIn/SignIn";
+import Register from "./components/Register/Register";
 
 const app = new Clarifai.App({
   apiKey: "2482d8bba84f44ea8f9c1805cf48db78",
@@ -20,6 +22,8 @@ class App extends Component {
       input: "",
       imageUrl: "",
       box: "{}",
+      route: "signin",
+      isSignedIn: false,
     };
   }
 
@@ -38,7 +42,6 @@ class App extends Component {
   };
 
   displayFaceBox = (box) => {
-    console.log(box);
     this.setState({ box });
   };
 
@@ -64,18 +67,39 @@ class App extends Component {
       .catch((err) => console.log(err));
   };
 
+  onRouteChange = (route) => {
+    if (route === "signout") {
+      this.setState({ isSignedIn: false });
+    } else if (route === "home") {
+      this.setState({ isSignedIn: true });
+    }
+    this.setState({ route: route });
+  };
+
   render() {
+    const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
         <Background />
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm
-          onInputChange={this.onInputChange}
-          onButtonSubmit={this.onButtonSubmit}
+        <Navigation
+          isSignedIn={isSignedIn}
+          onRouteChange={this.onRouteChange}
         />
-        <FaceRecognition imageUrl={this.state.imageUrl} box={this.state.box} />
+        {route === "home" ? (
+          <>
+            <Logo />
+            <Rank />
+            <ImageLinkForm
+              onInputChange={this.onInputChange}
+              onButtonSubmit={this.onButtonSubmit}
+            />
+            <FaceRecognition imageUrl={imageUrl} box={box} />
+          </>
+        ) : this.state.route === "signin" ? (
+          <SignIn onRouteChange={this.onRouteChange} />
+        ) : (
+          <Register onRouteChange={this.onRouteChange} />
+        )}
       </div>
     );
   }
